@@ -1,0 +1,35 @@
+version: "3"
+
+volumes: 
+    vol_dados_mysql:
+
+networks: 
+    redebackend:
+
+services: 
+
+    cont_mysql:
+        image: "mysql:5.7"
+        container_name: cont_mysql
+        volumes: 
+            - vol_dados_mysql:/var/lib/mysql
+            - ./_MySQL_Init_Script:/docker-entrypoint-initdb.d
+        networks:
+            - redebackend
+        environment: 
+            - MYSQL_ROOT_PASSWORD=numsey
+            - bind-address=0.0.0.0
+
+    mvc:
+        build : 
+            context : .
+            dockerfile : Dockerfile.multi
+        networks :
+            - redebackend
+        ports: 
+            - "5000:5000"
+        environment : 
+            - DBHOST=cont_mysql
+            - ASPNETCORE_ENVIRONMENT=Development
+        depends_on : 
+            - cont_mysql

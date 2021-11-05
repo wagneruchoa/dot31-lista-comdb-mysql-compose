@@ -1,0 +1,35 @@
+version: "3.5"
+
+volumes: 
+    vol-dados-mysql:
+
+networks: 
+    rede-backend:
+
+services: 
+
+    mysql-servico:
+        image: "mysql:5.7"
+        container_name: mysql-servico
+        volumes: 
+            - vol-dados-mysql:/var/lib/mysql
+            - ./_MySQL_Init_Script:/docker-entrypoint-initdb.d
+        networks:
+            - rede-backend
+        environment: 
+            - MYSQL_ROOT_PASSWORD=numsey
+            - bind-address=0.0.0.0
+
+    dot31-lista-comdb-mysql-compose-app:
+        build : 
+            context : .
+            dockerfile : Dockerfile.dev
+        networks :
+            - rede-backend
+        ports: 
+            - "5000:5000"
+        environment : 
+            - DBHOST=mysql-servico
+            - ASPNETCORE_ENVIRONMENT=Development
+        depends_on : 
+            - mysql-servico
