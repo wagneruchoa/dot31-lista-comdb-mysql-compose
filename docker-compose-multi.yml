@@ -1,35 +1,35 @@
 version: "3"
 
 volumes: 
-    vol_dados_mysql:
+    vol-dados-mysql:
 
 networks: 
-    redebackend:
+    rede-backend:
 
 services: 
 
-    cont_mysql:
+    mysql-servico:
         image: "mysql:5.7"
-        container_name: cont_mysql
+        container_name: mysql-servico
         volumes: 
-            - vol_dados_mysql:/var/lib/mysql
+            - vol-dados-mysql:/var/lib/mysql
             - ./_MySQL_Init_Script:/docker-entrypoint-initdb.d
         networks:
-            - redebackend
+            - rede-backend
         environment: 
             - MYSQL_ROOT_PASSWORD=numsey
             - bind-address=0.0.0.0
 
-    mvc:
+    dot31-lista-comdb-mysql-compose-app:
         build : 
             context : .
             dockerfile : Dockerfile.multi
         networks :
-            - redebackend
+            - rede-backend
         ports: 
             - "5000:5000"
         environment : 
-            - DBHOST=cont_mysql
+            - DBHOST=mysql-servico
             - ASPNETCORE_ENVIRONMENT=Development
         depends_on : 
-            - cont_mysql
+            - mysql-servico
